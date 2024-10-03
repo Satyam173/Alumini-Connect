@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { setSelectedPost } from "../redux/postSlice";
 import axios from "axios";
 import { useDispatch } from "react-redux";
+import { Badge } from "./ui/badge";
 const Post = ({ post }) => {
   const [text, setText] = useState("");
   const [open, setOpen] = useState(false);
@@ -70,7 +71,7 @@ const Post = ({ post }) => {
       });
 
       if(res.data.success){
-        const updatedCommentData = [...comment,res.data.message];
+        const updatedCommentData = [...comment,res.data.comment];
         setComment(updatedCommentData);
         const updatedPostData = posts.map(p=>p._id === post?._id ? {...p,comments:updatedCommentData}:p);
         dispatch(setPosts(updatedPostData));
@@ -111,7 +112,10 @@ const Post = ({ post }) => {
             />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
+          <div className="flex items-center gap-3">
           <h1>{post.author?.username}</h1>
+          {user?._id===post.author._id && <Badge variant="secondary">Author</Badge> }
+          </div>
         </div>
         <Dialog>
           <DialogTrigger asChild>
@@ -174,12 +178,20 @@ const Post = ({ post }) => {
         <span className="font-medium mr-2">{post.author?.username}</span>
         {post.caption}
       </p>
-      <span
-        onClick={() => setOpen(true)}
-        className="cursor-pointer text-sm text-gray-400"
-      >
-        View all {comment.length} comments
-      </span>
+      {
+        comment.length>0 && (
+          <span
+          onClick={() => {
+            dispatch(setSelectedPost(post));
+            setOpen(true)
+          } }
+          className="cursor-pointer text-sm text-gray-400"
+        >
+          View all {comment.length} comments
+        </span>
+        )
+      }
+     
       <CommentDialogue open={open} setOpen={setOpen} />
       <div className="flex items-center justify-between">
         <input
