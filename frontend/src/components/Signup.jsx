@@ -39,12 +39,12 @@ const Signup = () => {
       );
       if (res.data.success) {
         toast.success(res.data.message);
-        navigate("/login");
         setInput({
             username: "",
             email: "",
             password: "",
           });
+          navigate('/')
       }
       console.log(res);
 

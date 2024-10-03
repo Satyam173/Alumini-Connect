@@ -11,7 +11,7 @@ const authSlice = createSlice({
             state.user = action.payload;
         },
         setSuggestedUsers:(state,action)=>{
-            state.suggestedUsers = action.payload
+            state.suggestedUsers = action.payload;
         }
     }
 })
