@@ -20,7 +20,7 @@ const RightSidebar = () => {
           <span className="text-gray-600 text-sm">{user?.bio || "Bio here ..."}</span>
         </div>
       </div>
-      {/* <SuggestedUsers/> */}
+      <SuggestedUsers/>
     </div>
   );
 };
