@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import useGetUserProfile from "@/hooks/useGetUserProfile";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Button } from "./ui/button";
 
 const Profile = () => {
   const params = useParams();
@@ -12,7 +13,7 @@ const Profile = () => {
   return (
     <div className="flex max-w-4xl justify-center mx-auto pl-10">
       <div className="flex flex-col gap-20 p-8">
-        <div className="grid grid-col-2">
+        <div className="grid grid-cols-2">
           <section className="flex items-center justify-center">
             <Avatar className="h-32 w-32">
               <AvatarImage
@@ -24,7 +25,20 @@ const Profile = () => {
           </section>
           <section>
             <div className="flex flex-col gap-5">
-              <span>{userProfile?.username}</span>
+              <div className="flex items-center gap-2">
+                <span>{userProfile?.username}</span>
+                <div>
+                  <Button variant="secondary" className="hover:bg-gray-200 h-8">
+                    Edit profile
+                  </Button>
+                  <Button variant="secondary" className="hover:bg-gray-200 h-8">
+                    View archive
+                  </Button>
+                  <Button variant="secondary" className="hover:bg-gray-200 h-8">
+                    Ad tools
+                  </Button>
+                </div>
+              </div>
             </div>
           </section>
         </div>
