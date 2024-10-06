@@ -5,11 +5,10 @@ import LeftSidebar from './LeftSidebar'
 const MainLayout = () => {
   return (
     <div>
-      <div>
-        <LeftSidebar />
-        <Outlet />
-      </div>
-
+         <LeftSidebar/>
+        <div>
+            <Outlet/>
+        </div>
     </div>
   )
 }
