@@ -47,7 +47,7 @@ export const addNewPost = async(req,res)=>{
 
 export const getAllPost = async(req,res)=> {
     try {
-        const post = await Post.find().sort({createdAt:-1})
+        const posts = await Post.find().sort({createdAt:-1})
         .populate({path:'author',select:'profilePicture,username'})
         .populate({path:'comments',sort:{createdAt:-1},
             populate:{
