@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const EditProfile = () => {
     const {user} = useSelector(store=>store.auth);
   return (
-    <div>
+    <div className="flex max-w-2xl pl-10"> 
       <section>
         <h1 className="font-bold text-xl">Edit profile</h1>
         <div className="flex items-center gap-2">
