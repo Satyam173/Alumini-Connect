@@ -1,10 +1,16 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { Avatar,AvatarFallback,AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const SuggestedUsers = () => {
   const { suggestedUsers } = useSelector((store) => store.auth);
+
+  // Check if suggestedUsers is an array before mapping over it
+  if (!suggestedUsers || suggestedUsers.length === 0) {
+    return <div>No suggestions available</div>;
+  }
+
   return (
     <div className="my-10">
       <div className="flex items-center justify-between text-sm gap-5">
