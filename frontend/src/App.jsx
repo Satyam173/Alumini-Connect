@@ -66,7 +66,7 @@ function App() {
         dispatch(setOnlineUsers(onlineUsers));
       });
 
-      socket.on('notification',(notification)=>{
+      socketio.on('notification',(notification)=>{
         dispatch(setLikeNotification(notification));
       })
 
