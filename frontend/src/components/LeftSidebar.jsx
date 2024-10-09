@@ -17,12 +17,17 @@ import { useState } from "react";
 import CreatePost from "./CreatePost";
 import { setAuthUser } from "@/redux/authSlice";
 import { setPosts, setSelectedPost } from "@/redux/postSlice";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
 
 const LeftSidebar = () => {
   const navigate = useNavigate();
   const { user } = useSelector((store) => store.auth);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const { likeNotification } = useSelector(
+    (store) => store.realTimeNotification
+  );
 
   const logoutHandler = async () => {
     try {
@@ -49,15 +54,12 @@ const LeftSidebar = () => {
       logoutHandler();
     } else if (textType === "Create") {
       setOpen(true);
-    }
-    else if(textType==="Profile"){
+    } else if (textType === "Profile") {
       navigate(`/profile/${user?._id}`);
-    }
-    else if(textType==="Home"){
-      navigate('/');
-    }
-    else if(textType=="Messages"){
-      navigate('/chat');
+    } else if (textType === "Home") {
+      navigate("/");
+    } else if (textType == "Messages") {
+      navigate("/chat");
     }
   };
   const sidebarItems = [
@@ -79,7 +81,7 @@ const LeftSidebar = () => {
     { icon: <LogOut />, text: "Logout" },
   ];
   return (
-    <div className='fixed top-0 z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen'>
+    <div className="fixed top-0 z-10 left-0 px-4 border-r border-gray-300 w-[16%] h-screen">
       <div className="flex flex-col h-full p-4">
         <h1 className="text-2xl font-bold mb-8 my-8 pl-8">LOGO</h1>
         <nav className="flex-grow">
@@ -91,6 +93,29 @@ const LeftSidebar = () => {
             >
               <span className="text-xl">{item.icon}</span>
               <span className="text-sm font-medium">{item.text}</span>
+              {item.text == "Notifications" && likeNotification.length > 0 && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      className="rounded-full h-5 w-5 absolute botton-6 left-6"
+                      size="icon"
+                    >
+                      {likeNotification.length}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div>
+                      {
+                        likeNotification.length ==0 ? (<p>No new notification</p>):(
+                          likeNotification.map((notification,i)=>{
+                            
+                          })
+                        )
+                      }
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           ))}
         </nav>

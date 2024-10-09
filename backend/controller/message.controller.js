@@ -5,11 +5,11 @@ export const sendMessage = async (req,res) => {
     try {
         const senderId = req.id;
         const receiverId = req.params.id;
-        const {message} = req.body;
+        const {textMessage:message} = req.body;
 
         let conversation = await Conversation.findOne({
             participants:{$all:[senderId,receiverId]}
-        });
+        }).populate('messages');
         //establish the conversation if not started yet
         if(!conversation){
             conversation = await Conversation.create({
