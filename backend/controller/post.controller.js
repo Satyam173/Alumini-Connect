@@ -2,6 +2,7 @@ import sharp from 'sharp';
 import { Post } from '../models/post.model.js';
 import { User } from '../models/user.model.js';
 import { Comment } from '../models/comment.model.js';
+import { getReceiverSocketId } from '../socket/socket.js';
 
 export const addNewPost = async(req,res)=>{
     try {
@@ -99,6 +100,21 @@ export const likePost = async(req,res)=>{
         await post.save();
 
         //implement socket.io
+        const user = await User.findById(likeKarnewalaUserkiId).select("username profilePicture");
+        const postOwnerId = post.author.toString();
+
+        if(postOwnerId!=likeKarnewalaUserkiId){
+            // emit a notification event
+            const notification = {
+                type:'like',
+                userId:likeKarnewalaUserkiId,
+                userDetails:user,
+                postId,
+                message:"Your post was liked"
+            }
+            const postOwnerScoketId = getReceiverSocketId(postOwnerId);
+            io.to(postOwnerScoketId).emit('notification',notification);
+        }
 
 
         return res.status(200).json({
@@ -122,6 +138,21 @@ export const dislikePost = async(req,res)=>{
         await post.save();
 
         //implement socket.io
+        const user = await User.findById(likeKarnewalaUserkiId).select("username profilePicture");
+        const postOwnerId = post.author.toString();
+
+        if(postOwnerId!=likeKarnewalaUserkiId){
+            // emit a notification event
+            const notification = {
+                type:'dislike',
+                userId:likeKarnewalaUserkiId,
+                userDetails:user,
+                postId,
+                message:"Your post was dis liked"
+            }
+            const postOwnerScoketId = getReceiverSocketId(postOwnerId);
+            io.to(postOwnerScoketId).emit('notification',notification);
+        }
 
 
         return res.status(200).json({
