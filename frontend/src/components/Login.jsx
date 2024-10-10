@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import { Label } from '@/components/ui/label'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setAuthUser } from "../redux/authSlice";
 
 const Login = () => {
@@ -19,7 +19,7 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
+  const {user} = useSelector(store=>store.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -61,6 +61,13 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  useEffect(()=>{
+    if(user){
+      navigate('/');
+    }
+  },[])
+
   return (
     <div className="flex w-screen items-center justify-center h-screen">
       <form

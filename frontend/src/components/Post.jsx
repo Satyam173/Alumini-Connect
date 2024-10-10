@@ -61,19 +61,25 @@ const Post = ({ post }) => {
     }
   };
 
-  const commentHandler = async ()=>{
+  const commentHandler = async () => {
     try {
-      const res = await axios.post(`http://localhost:8000/api/v1/post/${post._id}/comment`,{text},{
-        headers:{
-          "Content-Type":"application/json"
-        },
-        withCredentials:true
-      });
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/post/${post._id}/comment`,
+        { text },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
-      if(res.data.success){
-        const updatedCommentData = [...comment,res.data.comment];
+      if (res.data.success) {
+        const updatedCommentData = [...comment, res.data.comment];
         setComment(updatedCommentData);
-        const updatedPostData = posts.map(p=>p._id === post?._id ? {...p,comments:updatedCommentData}:p);
+        const updatedPostData = posts.map((p) =>
+          p._id === post?._id ? { ...p, comments: updatedCommentData } : p
+        );
         dispatch(setPosts(updatedPostData));
         toast.success(res.data.message);
         setText("");
@@ -81,7 +87,21 @@ const Post = ({ post }) => {
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  const bookmarkHandler = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8000/api/v1/post/${post._id}/bookmark`,
+        { withCredentials: true }
+      );
+      if (res.data.success) {
+        toast.success(res.data.success);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const deletePostHandler = async () => {
     try {
@@ -113,8 +133,10 @@ const Post = ({ post }) => {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
           <div className="flex items-center gap-3">
-          <h1>{post.author?.username}</h1>
-          {user?._id===post.author._id && <Badge variant="secondary">Author</Badge> }
+            <h1>{post.author?.username}</h1>
+            {user?._id === post.author._id && (
+              <Badge variant="secondary">Author</Badge>
+            )}
           </div>
         </div>
         <Dialog>
@@ -122,12 +144,14 @@ const Post = ({ post }) => {
             <MoreHorizontal className="cursor-pointer" />
           </DialogTrigger>
           <DialogContent className="flex flex-col items-center tex-sm text-center">
-            <Button
-              variant="ghost"
-              className="cursor-pointer w-fit text-[#ED4956] font-bold"
-            >
-              Unfollow
-            </Button>
+            {post?.author?._id != user?._id && (
+              <Button
+                variant="ghost"
+                className="cursor-pointer w-fit text-[#ED4956] font-bold"
+              >
+                Unfollow
+              </Button>
+            )}
             <Button variant="ghost" className="cursor-pointer w-fit ">
               Add to favorites
             </Button>
@@ -150,25 +174,32 @@ const Post = ({ post }) => {
       />
       <div className="flex items-center justify-between my-2">
         <div className="flex items-center gap-3">
-          {
-            liked ?  <FaHeart size={'24'} className="cursor-pointer text-red-600" onClick={likeOrDislikeHandler} /> : <FaRegHeart
-            onClick={likeOrDislikeHandler}
-            size={"22px"}
-            className="cursor-pointer hover:text-gray-600"
-          />
-          }
-          
+          {liked ? (
+            <FaHeart
+              size={"24"}
+              className="cursor-pointer text-red-600"
+              onClick={likeOrDislikeHandler}
+            />
+          ) : (
+            <FaRegHeart
+              onClick={likeOrDislikeHandler}
+              size={"22px"}
+              className="cursor-pointer hover:text-gray-600"
+            />
+          )}
+
           <MessageCircle
             onClick={() => {
               dispatch(setSelectedPost(post));
-              setOpen(true)
-            } }
+              setOpen(true);
+            }}
             size={"22px"}
             className="cursor-pointer hover:text-gray-600"
           />
           <Send size={"22px"} className="cursor-pointer hover:text-gray-600" />
         </div>
         <Bookmark
+          onClick={bookmarkHandler}
           className="cursor-pointer hover:text-gray-600"
           size={"22px"}
         />
@@ -178,20 +209,18 @@ const Post = ({ post }) => {
         <span className="font-medium mr-2">{post.author?.username}</span>
         {post.caption}
       </p>
-      {
-        comment.length>0 && (
-          <span
+      {comment.length > 0 && (
+        <span
           onClick={() => {
             dispatch(setSelectedPost(post));
-            setOpen(true)
-          } }
+            setOpen(true);
+          }}
           className="cursor-pointer text-sm text-gray-400"
         >
           View all {comment.length} comments
         </span>
-        )
-      }
-     
+      )}
+
       <CommentDialogue open={open} setOpen={setOpen} />
       <div className="flex items-center justify-between">
         <input
@@ -201,7 +230,14 @@ const Post = ({ post }) => {
           onChange={changeEventHandler}
           className="outline-none border-none text-sm w-full"
         />
-        {text && <span onClick={commentHandler} className="text-[#3BADF8] cursor-pointer">Post</span>}
+        {text && (
+          <span
+            onClick={commentHandler}
+            className="text-[#3BADF8] cursor-pointer"
+          >
+            Post
+          </span>
+        )}
       </div>
     </div>
   );

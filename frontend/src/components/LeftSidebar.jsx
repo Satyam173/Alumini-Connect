@@ -110,7 +110,7 @@ const LeftSidebar = () => {
                       ) : (
                         likeNotification.map((notification) => {
                           return (
-                            <div key={notification.userId} className="flex items-center gap-2">
+                            <div key={notification.userId} className="flex items-center gap-2 my-2">
                               <Avatar>
                                 <AvatarImage
                                   src={notification.userDetails?.profilePicture}

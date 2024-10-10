@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import { Label } from '@/components/ui/label'
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Signup = () => {
   const [input, setInput] = useState({
@@ -18,6 +19,8 @@ const Signup = () => {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const {user} = useSelector(store=>store.auth);
 
   const changeEventHandler = (e) => {
     setInput({ ...input, [e.target.name]: e.target.value });
@@ -55,6 +58,11 @@ const Signup = () => {
       setLoading(false);
     }
   };
+  useEffect(()=>{
+    if(user){
+      navigate('/');
+    }
+  },[])
   return (
     <div className="flex w-screen items-center justify-center h-screen">
       <form
