@@ -12,47 +12,54 @@ import { setPosts } from "@/redux/postSlice";
 import Posts from "./Posts";
 import axios from "axios";
 const CommentDialogue = ({ open, setOpen }) => {
-    const [text,setText] = useState("");
-    const {selectedPost,posts} = useSelector(store=>store.post);
-    const [comment,setComment] = useState(selectedPost?.comments);
-    const dispatch = useDispatch();
+  const [text, setText] = useState("");
+  const { selectedPost, posts } = useSelector((store) => store.post);
+  const [comment, setComment] = useState(selectedPost?.comments || []); // Initialize with an empty array if no comments
+  const dispatch = useDispatch();
 
-    useEffect(()=>{
-      if(selectedPost){
-        setComment(selectedPost.comments)
-      }
-    },[selectedPost])
-
-    const changeEventHandler = (e)=>{
-        const inputText = e.target.value;
-        if(inputText.trim()){
-            setText(inputText);
-        }else{
-            setText("");
-        }
+  useEffect(() => {
+    if (selectedPost && selectedPost.comments) {
+      setComment(selectedPost.comments);
     }
+  }, [selectedPost]);
 
-    const sendMessageHandler = async ()=>{
-      try {
-        const res = await axios.post(`http://localhost:8000/api/v1/post/${selectedPost?._id}/comment`,{text},{
-          headers:{
-            "Content-Type":"application/json"
+  const changeEventHandler = (e) => {
+    const inputText = e.target.value;
+    setText(inputText.trim() ? inputText : "");
+  };
+
+  const sendMessageHandler = async () => {
+    try {
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/post/${selectedPost?._id}/comment`,
+        { text },
+        {
+          headers: {
+            "Content-Type": "application/json",
           },
-          withCredentials:true
-        });
-  
-        if(res.data.success){
-          const updatedCommentData = [...comment,res.data.comment];
-          setComment(updatedCommentData);
-          const updatedPostData = posts.map(p=>p._id === selectedPost?._id ? {...p,comments:updatedCommentData}:p);
-          dispatch(setPosts(updatedPostData));
-          toast.success(res.data.message);
-          setText("");
+          withCredentials: true,
         }
-      } catch (error) {
-        console.log(error);
+      );
+
+      if (res.data.success) {
+        const updatedCommentData = [...comment, res.data.comment];
+        setComment(updatedCommentData);
+
+        const updatedPostData = posts.map((p) =>
+          p._id === selectedPost?._id
+            ? { ...p, comments: updatedCommentData }
+            : p
+        );
+        dispatch(setPosts(updatedPostData));
+
+        toast.success(res.data.message);
+        setText("");
       }
+    } catch (error) {
+      console.log(error);
     }
+  };
+
   return (
     <Dialog open={open}>
       <DialogContent
@@ -72,43 +79,54 @@ const CommentDialogue = ({ open, setOpen }) => {
             <div className="flex items-center justify-between">
               <div className="flex items-center justify-between p-4">
                 <div className="flex gap-3 items-center">
-                <Link>
-                  <Avatar>
-                    <AvatarImage src={selectedPost?.author?.profilePicture} />
-                  </Avatar>
-                </Link>
+                  <Link>
+                    <Avatar>
+                      <AvatarImage src={selectedPost?.author?.profilePicture} />
+                    </Avatar>
+                  </Link>
                 </div>
                 <div>
-                  <Link className="font-semibold text-xs">{selectedPost?.author?.username}</Link>
-                  {/* <span className="text-sm text-gray-500">Bio here...</span> */}
+                  <Link className="font-semibold text-xs">
+                    {selectedPost?.author?.username}
+                  </Link>
                 </div>
               </div>
 
               <Dialog>
                 <DialogTrigger asChild>
-                    <MoreHorizontal className="cursor-pointer mr-3"/>
-              </DialogTrigger>
-              <DialogContent className="flex flex-col items-center text-center">
-                <div className="cursor-pointer w-full text-[#ED4956] font-bold">
+                  <MoreHorizontal className="cursor-pointer mr-3" />
+                </DialogTrigger>
+                <DialogContent className="flex flex-col items-center text-center">
+                  <div className="cursor-pointer w-full text-[#ED4956] font-bold">
                     Unfollow
-                </div>
-                <div className="cursor-pointer w-full ">
-                    Add to favorites
-                </div>
-              </DialogContent>
+                  </div>
+                  <div className="cursor-pointer w-full">Add to favorites</div>
+                </DialogContent>
               </Dialog>
             </div>
             <hr />
             <div className="flex-1 overflow-y-auto max-h-96 p-4">
-              {
-                comment?.comments.map((comment)=> <Comment key={comment._id} comment={comment}/>)
-              }
+              {comment?.length > 0 ? (
+                comment.map((comment) => (
+                  <Comment key={comment._id} comment={comment} />
+                ))
+              ) : (
+                <p>No comments yet.</p>
+              )}
             </div>
             <div className="p-4">
-                <div className="flex items-center gap-2">
-                <input type="text" onChange={changeEventHandler} value={text} placeholder="Add a comment..." className="w-full text-sm border-gray-300 outline-none p-2 rounded "/>
-                <Button disabled={!text} onClick={sendMessageHandler} variant="outline">Send</Button>
-                </div> 
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  onChange={changeEventHandler}
+                  value={text}
+                  placeholder="Add a comment..."
+                  className="w-full text-sm border-gray-300 outline-none p-2 rounded "
+                />
+                <Button disabled={!text} onClick={sendMessageHandler} variant="outline">
+                  Send
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -118,3 +136,4 @@ const CommentDialogue = ({ open, setOpen }) => {
 };
 
 export default CommentDialogue;
+
