@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription } from "./ui/dialog"; // Added DialogTitle and DialogDescription
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Link } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
@@ -9,26 +9,36 @@ import { useDispatch, useSelector } from "react-redux";
 import Comment from "./Comment";
 import { toast } from "sonner";
 import { setPosts } from "@/redux/postSlice";
-import Posts from "./Posts";
 import axios from "axios";
+
 const CommentDialogue = ({ open, setOpen }) => {
   const [text, setText] = useState("");
   const { selectedPost, posts } = useSelector((store) => store.post);
-  const [comment, setComment] = useState(selectedPost?.comments || []); // Initialize with an empty array if no comments
+  const [comment, setComment] = useState([]); // Initialize with an empty array
   const dispatch = useDispatch();
 
+  // Set comments based on the selectedPost
   useEffect(() => {
     if (selectedPost && selectedPost.comments) {
       setComment(selectedPost.comments);
     }
   }, [selectedPost]);
 
+  // Handle input change
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
     setText(inputText.trim() ? inputText : "");
   };
 
+  // Handle comment submission
   const sendMessageHandler = async () => {
+    console.log("Comment text:", text);
+    console.log("Post ID:", selectedPost?._id);
+
+    if (!text.trim()) {
+      return toast.error("Comment cannot be empty.");
+    }
+
     try {
       const res = await axios.post(
         `http://localhost:8000/api/v1/post/${selectedPost?._id}/comment`,
@@ -56,7 +66,8 @@ const CommentDialogue = ({ open, setOpen }) => {
         setText("");
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error:", error.response?.data || error.message);
+      toast.error("Failed to send comment.");
     }
   };
 
@@ -66,6 +77,11 @@ const CommentDialogue = ({ open, setOpen }) => {
         onInteractOutside={() => setOpen(false)}
         className="max-w-5xl p-0 flex flex-col"
       >
+        <DialogTitle>Comments Section</DialogTitle> {/* Added title for accessibility */}
+        <DialogDescription>
+          Add your comments below for the selected post.
+        </DialogDescription> {/* Added description for accessibility */}
+
         <div className="flex flex-1">
           <div className="w-1/2">
             <img
@@ -123,7 +139,11 @@ const CommentDialogue = ({ open, setOpen }) => {
                   placeholder="Add a comment..."
                   className="w-full text-sm border-gray-300 outline-none p-2 rounded "
                 />
-                <Button disabled={!text} onClick={sendMessageHandler} variant="outline">
+                <Button
+                  disabled={!text}
+                  onClick={sendMessageHandler}
+                  variant="outline"
+                >
                   Send
                 </Button>
               </div>
@@ -136,4 +156,3 @@ const CommentDialogue = ({ open, setOpen }) => {
 };
 
 export default CommentDialogue;
-
