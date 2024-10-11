@@ -1,12 +1,11 @@
-import { configureStore } from "@reduxjs/toolkit";
-import authSlice from "./authSlice";
-import postSlice from "./postSlice";
-import socketSlice from './socketSlice'
-import chatSlice from './chatSlice'
-import rtnSlice from './rtnSlice'
+import { configureStore,combineReducers } from "@reduxjs/toolkit";
+import authSlice from "./authSlice.js";
+import postSlice from "./postSlice.js";
+import socketSlice from './socketSlice.js'
+import chatSlice from './chatSlice.js'
+import rtnSlice from './rtnSlice.js'
 
 import {
-  persistStore,
   persistReducer,
   FLUSH,
   REHYDRATE,
@@ -16,7 +15,7 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { combineReducers } from "redux";
+// import { combineReducers } from "redux";
 
 const persistConfig = {
   key: "root",

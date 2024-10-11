@@ -18,28 +18,28 @@ const CommentDialog = ({ open, setOpen }) => {
 
   useEffect(() => {
     if (selectedPost) {
-      setComment(selectedPost.comments);
+      setComment(selectedPost.comments || []);
+      console.log("Comments loaded:", selectedPost.comments);
     }
   }, [selectedPost]);
 
   const changeEventHandler = (e) => {
     const inputText = e.target.value;
-    if (inputText.trim()) {
-      setText(inputText);
-    } else {
-      setText("");
-    }
+    setText(inputText);
   }
 
   const sendMessageHandler = async () => {
+    if (!text.trim()) return;
 
     try {
-      const res = await axios.post(`http://localhost:8000/api/v1/post/${selectedPost?._id}/comment`, {text} , {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      });
+      const res = await axios.post(
+        `http://localhost:8000/api/v1/post/${selectedPost?._id}/comment`,
+        { text },
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
 
       if (res.data.success) {
         const updatedCommentData = [...comment, res.data.comment];
@@ -50,16 +50,20 @@ const CommentDialog = ({ open, setOpen }) => {
         );
         dispatch(setPosts(updatedPostData));
         toast.success(res.data.message);
-        setText("");
+        setText(""); // Reset input
       }
     } catch (error) {
       console.log(error);
+      toast.error("Failed to send the comment");
     }
   }
 
   return (
-    <Dialog open={open}>
-      <DialogContent onInteractOutside={() => setOpen(false)} className="max-w-5xl p-0 flex flex-col">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent
+        onInteractOutside={() => setOpen(false)}
+        className="max-w-5xl p-0 flex flex-col"
+      >
         <div className='flex flex-1'>
           <div className='w-1/2'>
             <img
@@ -79,7 +83,7 @@ const CommentDialog = ({ open, setOpen }) => {
                 </Link>
                 <div>
                   <Link className='font-semibold text-xs'>{selectedPost?.author?.username}</Link>
-                  {/* <span className='text-gray-600 text-sm'>Bio here...</span> */}
+                  <span className='text-gray-600 text-sm'>Bio here...</span>
                 </div>
               </div>
 
@@ -98,15 +102,29 @@ const CommentDialog = ({ open, setOpen }) => {
               </Dialog>
             </div>
             <hr />
+            {/* Comments Section */}
             <div className='flex-1 overflow-y-auto max-h-96 p-4'>
               {
-                comment.map((comment) => <Comment key={comment._id} comment={comment} />)
+                comment.length > 0 ? (
+                  comment.map((comment) => <Comment key={comment._id} comment={comment} />)
+                ) : (
+                  <p className="text-gray-500">No comments yet.</p>
+                )
               }
             </div>
+            {/* Comment Input */}
             <div className='p-4'>
               <div className='flex items-center gap-2'>
-                <input type="text" value={text} onChange={changeEventHandler} placeholder='Add a comment...' className='w-full outline-none border text-sm border-gray-300 p-2 rounded' />
-                <Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">Send</Button>
+                <input
+                  type="text"
+                  value={text}
+                  onChange={changeEventHandler}
+                  placeholder='Add a comment...'
+                  className='w-full outline-none border text-sm border-gray-300 p-2 rounded'
+                />
+                <Button disabled={!text.trim()} onClick={sendMessageHandler} variant="outline">
+                  Send
+                </Button>
               </div>
             </div>
           </div>
@@ -116,4 +134,4 @@ const CommentDialog = ({ open, setOpen }) => {
   )
 }
 
-export default CommentDialog
+export default CommentDialog;

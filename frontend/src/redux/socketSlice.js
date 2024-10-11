@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { act } from "react";
 
 const socketSlice = createSlice({
     name:'socketio',
@@ -12,5 +11,5 @@ const socketSlice = createSlice({
         }
     }
 })
-export const {setSocket} = socketSlice.actions
-export default socketSlice.reducer
+export const {setSocket} = socketSlice.actions;
+export default socketSlice.reducer;
