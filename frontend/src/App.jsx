@@ -15,6 +15,7 @@ import { setSocket } from './redux/socketSlice'
 import { setOnlineUsers } from './redux/chatSlice'
 import { setLikeNotification } from './redux/rtnSlice'
 import ProtectedRoutes from './components/ProtectedRoutes'
+// import { SocketContextProvider } from './components/SocketContext'
 const router = createBrowserRouter([
   {
     path: '/',
@@ -83,9 +84,9 @@ function App() {
   },[user,dispatch])
 
   return (
-    <>
       <RouterProvider router={router} />
-    </>
+      
+    
   )
 }
 

@@ -165,43 +165,40 @@ export const dislikePost = async(req,res)=>{
     }
 }
 
-export const addComment = async (req,res)=>{
+export const addComment = async (req,res) =>{
     try {
         const postId = req.params.id;
-        const personWhoComments = req.id;
-        
-        const {text,type} = req.body;
-        const post  = await Post.findById(postId);
-        if(!text) return res.status(400).json({message:"Text is required",success:false});
-        if (!type) return res.status(400).json({ message: "Type is required", success: false }); 
+        const commentKrneWalaUserKiId = req.id;
+
+        const {text} = req.body;
+
+        const post = await Post.findById(postId);
+
+        if(!text) return res.status(400).json({message:'text is required', success:false});
 
         const comment = await Comment.create({
             text,
-            author:personWhoComments,
+            author:commentKrneWalaUserKiId,
             post:postId,
-            type
-        }).populate({
-            path:"author",
-            select:"username profilePicture"
+            type:'string'
         })
 
-        const populatedComment = await Comment.findById(comment._id).populate({
-            path: "author",
-            select: "username profilePicture"
-          });
-
+        await comment.populate({
+            path:'author',
+            select:"username profilePicture"
+        });
+        
         post.comments.push(comment._id);
         await post.save();
 
         return res.status(201).json({
-            message:"Comment Added",
-            comment:populatedComment,
+            message:'Comment Added',
+            comment,
             success:true
         })
 
     } catch (error) {
-       console.log(error); 
-       res.status(500).json({ message: "Server error", success: false });
+        console.log(error);
     }
 };
 
