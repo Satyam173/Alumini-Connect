@@ -65,6 +65,9 @@ const CommentDialog = ({ open, setOpen }) => {
         className="max-w-5xl p-0 flex flex-col"
       >
         <div className='flex flex-1'>
+          {
+            console.log(comment)
+          }
           <div className='w-1/2'>
             <img
               src={selectedPost?.image}

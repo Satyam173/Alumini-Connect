@@ -4,8 +4,10 @@ import { Avatar, AvatarImage , AvatarFallback } from './ui/avatar'
 const Comment = ({comment}) => {
   return (
     <div className='my-2'>
+      {
+        console.log(comment.text)
+      }
         <div className='flex gap-3 items-center'>
-          {console.log(comment.text)}
             <Avatar>
               <AvatarImage src = {comment?.author?.profilePicture} />
               <AvatarFallback>CN</AvatarFallback>

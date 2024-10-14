@@ -151,12 +151,12 @@ export const addComment = async (req, res) => {
   try {
     const postId = req.params.id;
     const userId = req.id;
-    const { text } = req.body;
+    const {text}  = req.body;
 
     if (!text) return res.status(400).json({ message: 'Text is required', success: false });
 
     const comment = await Comment.create({
-      text,
+      text:text,
       author: userId,
       post: postId,
     });
