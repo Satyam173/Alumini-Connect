@@ -81,7 +81,7 @@ const CommentDialog = ({ open, setOpen }) => {
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </Link>
-                <div>
+                <div className='flex gap-3'>
                   <Link className='font-semibold text-xs'>{selectedPost?.author?.username}</Link>
                   <span className='text-gray-600 text-sm'>Bio here...</span>
                 </div>
